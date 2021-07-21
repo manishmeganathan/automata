@@ -1,4 +1,6 @@
-use crate::cell::Cell;
+use crate::gameoflife::cell::Cell;
+use crate::gameoflife::griditer::{GridIteratorItem ,GridIterator};
+
 use ggez::graphics;
 
 // A struct that represents the cell grid
@@ -10,7 +12,6 @@ pub struct Grid {
     dimensions: Option<graphics::Rect>,
     // Represents the size of a single cell
     size: f32,
-    blend_mode: graphics::BlendMode,
 }
 
 // Constructor implemntations for Grid
@@ -21,7 +22,6 @@ impl Grid {
         Self {
             cellgrid: None,
             dimensions: None,
-            blend_mode: graphics::BlendMode::Add,
             size,
         }
     }
@@ -62,8 +62,32 @@ impl Clone for Grid {
         Self {
             cellgrid: self.cellgrid.clone(),
             dimensions: self.dimensions.clone(),
-            blend_mode: self.blend_mode.clone(),
             size: self.size,
+        }
+    }
+}
+
+// Implementation of the IntoIterator trait for Grid
+impl IntoIterator for Grid {
+    // Defines the iteration item
+    type Item = GridIteratorItem;
+    // Defines the iteration iterator
+    type IntoIter = GridIterator;
+
+    // Defines the iterator's initial state
+    fn into_iter(self) -> Self::IntoIter {
+        // Check the option value
+        match self.cellgrid {
+            // Panic if GetOption::None is returned
+            None => panic!("could not create grid iterator!"),
+            // Create GridIterator with the grid
+            Some(grid) => {
+                GridIterator {
+                    grid: grid,
+                    current_column: 0,
+                    current_row: 0,
+                }
+            }
         }
     }
 }
