@@ -19,10 +19,10 @@ impl Grid {
     // null grid for a given cell size in pixels
     pub fn new(size: f32) -> Self {
         Self {
+            cellgrid: None,
             dimensions: None,
             blend_mode: graphics::BlendMode::Add,
             size,
-            cellgrid: None,
         }
     }
 
@@ -53,5 +53,17 @@ impl Grid {
         self.cellgrid = Some(grid);
         // Assign the dimensions to the grid struct
         self.dimensions = Some(dimensions);
+    }
+}
+
+// Implementation of the Clone trait for Grid
+impl Clone for Grid {
+    fn clone(&self) -> Self {
+        Self {
+            cellgrid: self.cellgrid.clone(),
+            dimensions: self.dimensions.clone(),
+            blend_mode: self.blend_mode.clone(),
+            size: self.size,
+        }
     }
 }
