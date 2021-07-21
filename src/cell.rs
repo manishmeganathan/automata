@@ -8,9 +8,9 @@ pub enum Cell {
     Alive = 1,
 }
 
-// Constructor for a Cell
+// Constructor implemetation for Cell
 impl Cell {
-    // A function that generates a new Cell with a random cell state
+    // A constructor function that generates a new Cell with a random cell state
     pub fn new() -> Self {
         // Randomly generate a cell state by generating a random number
         // between 0 and 10. If the random number is divisible by 3, the 
@@ -19,7 +19,7 @@ impl Cell {
     }
 }
 
-// Implementation of the From<i32> trait for the Cell
+// Implementation of the From<i32> trait for Cell
 impl From<i32> for Cell {
     // Create a cell variant based on an int value.
     fn from(i: i32) -> Self {
