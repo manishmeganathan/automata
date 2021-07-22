@@ -17,7 +17,7 @@ pub struct Simulation<T> where T: SimGrid {
     // Represents the simulation grid
     pub grid: T,
     // Represents the refresh rate of the simulation
-    pub refresh: u32,
+    pub fps: u32,
     // Represents whether the simulation has been initialized
     pub initialized: bool,
 }
@@ -26,11 +26,11 @@ pub struct Simulation<T> where T: SimGrid {
 impl<T: SimGrid> Simulation<T> {
     // A constructor function that creates a new simulation with
     // the given cell size (pixels) and refresh rate (seconds).
-    pub fn new(cellsize: f32, refresh: u32) -> GameResult<Self> {
+    pub fn new(cellsize: f32, fps: u32) -> GameResult<Self> {
         Ok(Self {
             grid: T::new(cellsize),
             initialized: false,
-            refresh,
+            fps,
         })
     }
 }
