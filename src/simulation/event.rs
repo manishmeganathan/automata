@@ -1,12 +1,30 @@
-use ggez::{event, graphics, nalgebra as na};
 use ggez::GameResult;
+use ggez::event;
+use ggez::graphics;
+use ggez::nalgebra as na;
+use ggez::timer;
 
 use crate::simulation::sim::{SimGrid, Simulation};
 
 // Implementation of the EventHandler trait for Simulation
 impl<T: SimGrid> event::EventHandler for Simulation<T> {
     // A method that is called when the simulation state is to be updated
-    fn update(&mut self, _: &mut ggez::Context) -> GameResult<()> {
+    fn update(&mut self, ctx: &mut ggez::Context) -> GameResult<()> {
+        // If FPS is set to 0, then no rate-limiting
+        if self.fps == 0 {
+            // Update the simulation state
+            self.grid.update();
+        
+        // Otherwise refresh the graphics with the set FPS rate
+        } else {
+            // Wait for the FPS time to elapse
+            while timer::check_update_time(ctx, self.fps) {
+                // Update the simulation state
+                self.grid.update();
+            }
+        }
+
+        // Return GameResult::Ok
         Ok(())
     }
 
