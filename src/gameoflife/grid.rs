@@ -13,26 +13,36 @@ pub struct Grid {
     // Represents the 2D rectangular bounds of the grid
     dimensions: Option<graphics::Rect>,
     // Represents the size of a single cell
-    size: f32,
+    cellsize: f32,
+    // Represents the number of times the grid has been updated
+    generation: u32,
+    // Represents the number of cells that are alive
+    alive: u32,
+    // Represents the number of cells that are dead
+    dead: u32,
+
 }
 
 // Constructor implemntations for Grid
 impl SimGrid for Grid {
     // A constructor function that creates a  
     // null grid for a given cell size in pixels
-    fn new(size: f32) -> Self {
+    fn new(cellsize: f32) -> Self {
         Self {
             cellgrid: None,
+            cellsize,
             dimensions: None,
-            size,
+            generation: 0,
+            alive: 0,
+            dead: 0,
         }
     }
 
     // A method of Grid that initializes the grid for a given rectangle dimensions.
     fn initialize(&mut self, dimensions: graphics::Rect) {
         // Calculate the number of rows and columns in the grid
-        let rows = dimensions.w / self.size;
-        let cols = dimensions.h / self.size;
+        let rows = dimensions.w / self.cellsize;
+        let cols = dimensions.h / self.cellsize;
 
         // Create a new vector (represents rows)
         let mut grid = Vec::new();
@@ -64,7 +74,10 @@ impl Clone for Grid {
         Self {
             cellgrid: self.cellgrid.clone(),
             dimensions: self.dimensions.clone(),
-            size: self.size,
+            cellsize: self.cellsize,
+            generation: self.generation,
+            alive: self.alive,
+            dead: self.dead,
         }
     }
 }
@@ -122,10 +135,10 @@ impl graphics::Drawable for Grid {
 
                 // Create the bounds of the cell
                 let cellbounds = graphics::Rect::new(
-                    (x as f32) * self.size,
-                    (y as f32) * self.size,
-                    self.size,
-                    self.size,
+                    (x as f32) * self.cellsize,
+                    (y as f32) * self.cellsize,
+                    self.cellsize,
+                    self.cellsize,
                 );
 
                 // Add the cell fill to the mesh builder
