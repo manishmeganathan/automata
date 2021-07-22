@@ -91,3 +91,64 @@ impl IntoIterator for Grid {
         }
     }
 }
+
+// Implementation of graphics for Grid
+impl graphics::Drawable for Grid {
+
+    // A method that returns the dimensions of the grid
+    fn dimensions(&self, _ctx: &mut ggez::Context) -> Option<graphics::Rect> {
+        self.dimensions
+    }
+
+    // A method that returns the graphics blending mode of the grid
+    fn blend_mode(&self) -> Option<graphics::BlendMode> {
+        Some(graphics::BlendMode::Add)
+    }
+
+    // A method that set the graphics blend mode of the grid (currently does nothing)
+    fn set_blend_mode(&mut self, _: Option<graphics::BlendMode>) {}
+
+    // A method that draws the grid and returns a GameResult
+    fn draw(&self, ctx: &mut ggez::Context, param: graphics::DrawParam) -> ggez::GameResult<()> {
+        // Check if cell grid exists
+        if self.cellgrid.is_some() {
+            // Create a new graphic mesh builder
+            let mut mb = graphics::MeshBuilder::new();
+
+            // Iterate through each cell in the grid
+            for (x, y, cell) in self.clone() {
+
+                // Create the bounds of the cell
+                let cellbounds = graphics::Rect::new(
+                    (x as f32) * self.size,
+                    (y as f32) * self.size,
+                    self.size,
+                    self.size,
+                );
+
+                // Add the cell fill to the mesh builder
+                mb.rectangle(
+                    graphics::DrawMode::Fill(graphics::FillOptions::default()),
+                    cellbounds,
+                    // Set the cell color based on cell state
+                    match cell {
+                        Cell::Dead => [0.0, 0.0, 0.0, 1.0].into(),
+                        Cell::Alive => [1.0, 1.0, 1.0, 1.0].into(),
+                    },
+                )
+                // Add the cell boundary to the mesh builder
+                .rectangle(
+                    graphics::DrawMode::Stroke(graphics::StrokeOptions::default()),
+                    cellbounds,
+                    [1.0, 1.0, 1.0, 0.25].into(),
+                );
+            }
+
+            // Build and Draw the mesh
+            mb.build(ctx)?.draw(ctx, param)?;
+        }
+
+        // Return GameResult::Ok
+        Ok(())
+    }
+}
