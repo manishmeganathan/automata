@@ -1,6 +1,8 @@
 use crate::gameoflife::cell::Cell;
 use crate::gameoflife::iter::{GridIteratorItem ,GridIterator};
 
+use crate::simulation::sim::SimGrid;
+
 use ggez::graphics;
 
 // A struct that represents the cell grid
@@ -15,10 +17,10 @@ pub struct Grid {
 }
 
 // Constructor implemntations for Grid
-impl Grid {
+impl SimGrid for Grid {
     // A constructor function that creates a  
     // null grid for a given cell size in pixels
-    pub fn new(size: f32) -> Self {
+    fn new(size: f32) -> Self {
         Self {
             cellgrid: None,
             dimensions: None,
@@ -27,7 +29,7 @@ impl Grid {
     }
 
     // A method of Grid that initializes the grid for a given rectangle dimensions.
-    pub fn initialize(&mut self, dimensions: graphics::Rect) {
+    fn initialize(&mut self, dimensions: graphics::Rect) {
         // Calculate the number of rows and columns in the grid
         let rows = dimensions.w / self.size;
         let cols = dimensions.h / self.size;
