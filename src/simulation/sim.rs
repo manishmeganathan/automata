@@ -4,8 +4,12 @@ use ggez::graphics;
 // A trait for simulation grids.
 // The must be clone-able, iterable and drawable.
 pub trait SimGrid: Clone + IntoIterator + graphics::Drawable {
+    // A constructor method
     fn new(size: f32) -> Self;
+    // A method that sets the initial state of the grid
     fn initialize(&mut self, dimensions: graphics::Rect);
+    // A method that updates the state of the grid
+    fn update(&mut self);
 }
 
 // A generic struct that represents a simulation
