@@ -1,7 +1,6 @@
+use crate::simulation::sim::SimGrid;
 use crate::gameoflife::cell::Cell;
 use crate::gameoflife::iter::{GridIteratorItem ,GridIterator};
-
-use crate::simulation::sim::SimGrid;
 
 use ggez::graphics;
 
@@ -23,7 +22,7 @@ pub struct Grid {
 
 }
 
-// Constructor implemntations for Grid
+// Implementation of SimGrid trait for Grid
 impl SimGrid for Grid {
     // A constructor function that creates a  
     // null grid for a given cell size in pixels
@@ -65,6 +64,115 @@ impl SimGrid for Grid {
         self.cellgrid = Some(grid);
         // Assign the dimensions to the grid struct
         self.dimensions = Some(dimensions);
+    }
+
+    // A method of Grid that updates the grid state based on the rules of Conway's Game of Life.
+    //
+    // Automaton Rules:
+    // - Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+    // - Any live cell with two or three live neighbours lives on to the next generation.
+    // - Any live cell with more than three live neighbours dies, as if by overcrowding.
+    // - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+    // - All other states are propogated to the next generation.
+    fn update(&mut self) {
+        // Declare counter variables for the number of alive and dead cells
+        let mut alive: u32 = 0;
+        let mut dead: u32 = 0;
+
+        // Check if the cell grid exists
+        if self.cellgrid.is_some() {
+            // Create a clone of the cell grid
+            let mut newgrid = self.cellgrid.clone().unwrap();
+
+            // Iterate over the grid
+            for (x, y, cell) in self.clone() {
+
+                // Check the vicinity of the cell
+                let cell = match (cell, self.scan_vicinity(x, y)) {
+                    // If a cell is alive, and there are either too many live  
+                    // neighbors or not enough live neighbors, kill it.
+                    (Cell::Alive, n) if n < 2 || n > 3 => Cell::Dead,
+
+                    // If a cell is alive and has either 2 
+                    // or 3 live neighbors, keep it alive
+                    (Cell::Alive, n) if n == 3 || n == 2 => Cell::Alive,
+
+                    // If a cell is dead and has exactly 3 live neighbors, revive it
+                    (Cell::Dead, 3) => Cell::Alive,
+
+                    // Otherwise, keep the cell state
+                    (c, _) => c,
+                };
+
+                // Add the new cell to the new grid
+                newgrid[x][y] = cell.clone();
+
+                // Increment the alive or dead counter
+                match cell {
+                    Cell::Dead => dead += 1,
+                    Cell::Alive => alive += 1
+                }
+            }
+
+            // Assign the new grid to the grid struct
+            self.cellgrid = Some(newgrid)
+        }
+        
+        // Update the alive and dead cell value in the grid struct
+        self.alive = alive;
+        self.dead = dead;
+        // Increment the generation value in the grid struct
+        self.generation += 1;
+    }
+}
+
+// Implementation of helper methods for Grid
+impl Grid {
+    // A function that retrieves the number of alive cells in 
+    // the neighbouring vicity of a given cell (x, y)
+    fn scan_vicinity(&mut self, x: usize, y: usize) -> i32 {
+        // Declare a counter
+        let mut count = 0;
+
+        // Check if the cell grid exists
+        if let Some(grid) = &self.cellgrid {
+
+            // Iterate over the cells in the vicinity of the cell at (x, y).
+            // The [-1,0,1] vectors represent the vicinity offsets for the x and y axis each.
+            for x_off in vec![-1, 0, 1] {
+                for y_off in vec![-1, 0, 1] {
+                    // Create the position of the cell in the 
+                    // grid based on the vicinity offsets
+                    let nx = x as i32 + x_off;
+                    let ny = y as i32 + y_off;
+                    
+                    // Check if position is out of grid bounds (x axis)
+                    if nx < 0 || nx >= grid.len() as i32 {
+                        continue;
+                    }
+
+                    // Check if position is out of grid bounds (y axis)
+                    if ny < 0 || ny >= grid[nx as usize].len() as i32 {
+                        continue;
+                    }
+
+                    // Check if position points to the cell itself i.e (0,0) offsets
+                    if nx == x as i32 && ny == y as i32 {
+                        continue;
+                    }
+
+                    // Check if the cell if alive
+                    match grid[nx as usize][ny as usize].clone() {
+                        // Increment the counter if the cell is alive
+                        Cell::Alive => count = count+1,
+                        _ => continue,
+                    }
+                }
+            }
+        }
+
+        // Return the counter value
+        return count
     }
 }
 
