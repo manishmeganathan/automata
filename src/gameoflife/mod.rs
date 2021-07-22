@@ -1,3 +1,3 @@
 pub mod cell;
-pub mod griditer;
+pub mod iter;
 pub mod grid;

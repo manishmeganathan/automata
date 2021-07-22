@@ -1,5 +1,5 @@
 use crate::gameoflife::cell::Cell;
-use crate::gameoflife::griditer::{GridIteratorItem ,GridIterator};
+use crate::gameoflife::iter::{GridIteratorItem ,GridIterator};
 
 use ggez::graphics;
 
