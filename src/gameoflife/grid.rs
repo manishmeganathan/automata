@@ -3,34 +3,37 @@ use crate::gameoflife::cell::Cell;
 use crate::gameoflife::iter::{GridIteratorItem ,GridIterator};
 
 use ggez::graphics;
+use ggez::nalgebra as na;
 
 // A struct that represents the cell grid
 #[derive(Debug)]
 pub struct Grid {
     // Represents the 2D vector of grid cells
     cellgrid: Option<Vec<Vec<Cell>>>,
-    // Represents the 2D rectangular bounds of the grid
-    dimensions: Option<graphics::Rect>,
     // Represents the size of a single cell
     cellsize: f32,
+    // Represents the bounds of the grid
+    dimensions: Option<graphics::Rect>,
+    // Represents the height of the state banner
+    bannerheight: f32,
     // Represents the number of times the grid has been updated
     generation: u32,
     // Represents the number of cells that are alive
     alive: u32,
     // Represents the number of cells that are dead
     dead: u32,
-
 }
 
 // Implementation of SimGrid trait for Grid
 impl SimGrid for Grid {
-    // A constructor function that creates a  
-    // null grid for a given cell size in pixels
+    // A constructor function that creates a null grid for a given cell size in pixels.
+    // The height of the state banner is set to 50px.
     fn new(cellsize: f32) -> Self {
         Self {
             cellgrid: None,
             cellsize,
             dimensions: None,
+            bannerheight: 50.0,
             generation: 0,
             alive: 0,
             dead: 0,
@@ -41,7 +44,7 @@ impl SimGrid for Grid {
     fn initialize(&mut self, dimensions: graphics::Rect) {
         // Calculate the number of rows and columns in the grid
         let rows = dimensions.w / self.cellsize;
-        let cols = dimensions.h / self.cellsize;
+        let cols = (dimensions.h - self.bannerheight) / self.cellsize;
 
         // Create a new vector (represents rows)
         let mut grid = Vec::new();
@@ -181,8 +184,9 @@ impl Clone for Grid {
     fn clone(&self) -> Self {
         Self {
             cellgrid: self.cellgrid.clone(),
-            dimensions: self.dimensions.clone(),
             cellsize: self.cellsize,
+            dimensions: self.dimensions.clone(),
+            bannerheight: self.bannerheight,
             generation: self.generation,
             alive: self.alive,
             dead: self.dead,
@@ -270,6 +274,25 @@ impl graphics::Drawable for Grid {
             // Build and Draw the mesh
             mb.build(ctx)?.draw(ctx, param)?;
         }
+
+        // Declare variables for the banner offset and font size
+        let banner_offset;
+        let font_size = 25.0;
+
+        // Create the text graphic for the banner
+        let mut state_text = graphics::Text::new(format!("Conway's Game of Life || Generation: {} | Alive: {} | Dead: {}", self.generation, self.alive, self.dead));
+        // Set the font style for the text graphic
+        state_text.set_font(graphics::Font::default(), graphics::Scale::uniform(font_size));
+        
+        // Check for the grid dimensions
+        match self.dimensions {
+            // Calculate the banner offset
+            Some(dimensions) => banner_offset = dimensions.h - self.bannerheight + ((self.bannerheight - font_size) / 2.0),
+            None => panic!("could not retrieve grid dimenstions!")
+        }
+
+        // Draw the banner graphic
+        state_text.draw(ctx, (na::Point2::new(param.dest.x + 10.0, param.dest.y + banner_offset),).into())?;
 
         // Return GameResult::Ok
         Ok(())
