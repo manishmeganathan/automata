@@ -31,7 +31,7 @@ impl<T: SimGrid> event::EventHandler for Simulation<T> {
     // A method that is called when the simulation the simulation is to be rendered
     fn draw(&mut self, ctx: &mut ggez::Context) -> GameResult {
         // Clear the graphics window
-        graphics::clear(ctx, [1.0, 1.0, 1.0, 1.0].into());
+        graphics::clear(ctx, [0.0, 0.0, 0.0, 1.0].into());
 
         // Retrieve the size of the graphics window
         let width = graphics::screen_coordinates(ctx).w;
