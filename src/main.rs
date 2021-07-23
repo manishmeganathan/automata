@@ -3,8 +3,9 @@ use ggez::{conf, event};
 use automata::simulation::sim::Simulation;
 
 fn main() -> ggez::GameResult {
-    // Setup WindowMode and WindowSetup for ggez
-    let w_mode: conf::WindowMode = conf::WindowMode::default().dimensions(700.0, 700.0);
+    // Create ggez WindowMode. Height will be 50 pixels great than width (grid state display)
+    let w_mode: conf::WindowMode = conf::WindowMode::default().dimensions(1200.0, 600.0);
+    // Create ggez WindowSetup
     let w_setup: conf::WindowSetup = conf::WindowSetup::default().title("Conway's Game Of Life");
 
     // Create a ggez context with the window mode and window setup
