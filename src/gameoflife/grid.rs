@@ -72,9 +72,9 @@ impl SimGrid for Grid {
     // A method of Grid that updates the grid state based on the rules of Conway's Game of Life.
     //
     // Automaton Rules:
-    // - Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+    // - Any live cell with one or fewer live neighbours dies, as if caused by isolation.
     // - Any live cell with two or three live neighbours lives on to the next generation.
-    // - Any live cell with more than three live neighbours dies, as if by overcrowding.
+    // - Any live cell with four or more live neighbours dies, as if by overpopulation.
     // - Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
     // - All other states are propogated to the next generation.
     fn update(&mut self) {
