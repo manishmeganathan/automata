@@ -1,4 +1,4 @@
 pub mod commons;
 pub mod simulation;
 pub mod gameoflife;
-pub mod langstonant;
+pub mod langtonant;
