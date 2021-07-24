@@ -29,6 +29,10 @@ fn main() -> ggez::GameResult {
             .short("f")
             .long("fps")
             .help("Set the simulation FPS").default_value("0"))
+        .arg(Arg::with_name("VERSION")
+            .short("v")
+            .long("version")
+            .help("Prints application version"))
         // Argument for automaton to run
         .arg(Arg::with_name("AUTOMATON")
             .help("Automaton to Run. Ex. 'gameoflife', 'langstonant', etc. Refer to README for all options.")
@@ -36,6 +40,18 @@ fn main() -> ggez::GameResult {
             .index(1))
         // Retrieve the argument matches
         .get_matches();
+
+    // Check if the user has requested version information
+    match matches.occurrences_of("VERSION") {
+        // No occurrence of version flag
+        0 => {},
+        // Any arbitrary number of occurrences
+        _ => {
+            // Print the version information and exit
+            println!("Automata v{}", version);
+            std::process::exit(0);
+        }
+    }
 
     // Declare a bunch of variables
     let grid_w;
