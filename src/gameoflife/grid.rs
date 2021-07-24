@@ -277,7 +277,7 @@ impl graphics::Drawable for Grid {
 
         // Declare variables for the banner offset and font size
         let banner_offset;
-        let font_size = 25.0;
+        let font_size = 18.0;
 
         // Create the text graphic for the banner
         let mut state_text = graphics::Text::new(format!("Conway's Game of Life || Generation: {} | Alive: {} | Dead: {}", self.generation, self.alive, self.dead));
