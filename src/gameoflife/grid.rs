@@ -1,5 +1,5 @@
-use crate::simulation::sim::SimGrid;
-use crate::gameoflife::cell::Cell;
+use crate::commons::simulables::{SimCell, SimGrid};
+use crate::commons::binarycell::BinaryCell;
 use crate::gameoflife::iter::{GridIteratorItem ,GridIterator};
 
 use ggez::graphics;
@@ -9,7 +9,7 @@ use ggez::nalgebra as na;
 #[derive(Debug)]
 pub struct Grid {
     // Represents the 2D vector of grid cells
-    cellgrid: Option<Vec<Vec<Cell>>>,
+    cellgrid: Option<Vec<Vec<BinaryCell>>>,
     // Represents the size of a single cell
     cellsize: f32,
     // Represents the bounds of the grid
@@ -56,7 +56,7 @@ impl SimGrid for Grid {
             // Iterate for each column
             for _ in 0..(cols as i32) {
                 // Create a new cell and push it into the column vector
-                column.push(Cell::new());
+                column.push(BinaryCell::balanced());
             }
 
             // Push the column vector into the row vector (grid)
@@ -94,14 +94,14 @@ impl SimGrid for Grid {
                 let cell = match (cell, self.scan_vicinity(x, y)) {
                     // If a cell is alive, and there are either too many live  
                     // neighbors or not enough live neighbors, kill it.
-                    (Cell::Alive, n) if n < 2 || n > 3 => Cell::Dead,
+                    (BinaryCell::Active, n) if n < 2 || n > 3 => BinaryCell::Passive,
 
                     // If a cell is alive and has either 2 
                     // or 3 live neighbors, keep it alive
-                    (Cell::Alive, n) if n == 3 || n == 2 => Cell::Alive,
+                    (BinaryCell::Active, n) if n == 3 || n == 2 => BinaryCell::Active,
 
                     // If a cell is dead and has exactly 3 live neighbors, revive it
-                    (Cell::Dead, 3) => Cell::Alive,
+                    (BinaryCell::Passive, 3) => BinaryCell::Active,
 
                     // Otherwise, keep the cell state
                     (c, _) => c,
@@ -112,8 +112,8 @@ impl SimGrid for Grid {
 
                 // Increment the alive or dead counter
                 match cell {
-                    Cell::Dead => dead += 1,
-                    Cell::Alive => alive += 1
+                    BinaryCell::Passive => dead += 1,
+                    BinaryCell::Active => alive += 1
                 }
             }
 
@@ -167,7 +167,7 @@ impl Grid {
                     // Check if the cell if alive
                     match grid[nx as usize][ny as usize].clone() {
                         // Increment the counter if the cell is alive
-                        Cell::Alive => count = count+1,
+                        BinaryCell::Active => count = count+1,
                         _ => continue,
                     }
                 }
@@ -259,8 +259,8 @@ impl graphics::Drawable for Grid {
                     cellbounds,
                     // Set the cell color based on cell state
                     match cell {
-                        Cell::Dead => [0.0, 0.0, 0.0, 1.0].into(),
-                        Cell::Alive => [1.0, 1.0, 1.0, 1.0].into(),
+                        BinaryCell::Passive => [0.0, 0.0, 0.0, 1.0].into(),
+                        BinaryCell::Active => [1.0, 1.0, 1.0, 1.0].into(),
                     },
                 )
                 // Add the cell boundary to the mesh builder

@@ -1,12 +1,12 @@
-use crate::gameoflife::cell::Cell;
+use crate::commons::binarycell::BinaryCell;
 
 // A type alias for a Cell and its position in the grid
-pub type GridIteratorItem = (usize, usize, Cell);
+pub type GridIteratorItem = (usize, usize, BinaryCell);
 
 // A struct that represents an iterator over a Grid
 pub struct GridIterator {
     // The Grid being iterated over
-    pub grid: Vec<Vec<Cell>>,
+    pub grid: Vec<Vec<BinaryCell>>,
     // The current column position in the Grid
     pub current_column: usize,
     // The current row position in the Grid
