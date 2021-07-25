@@ -1,7 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use clap::{Arg, App};
 use ggez::{conf, event, GameError};
-use automata::commons::simulation::Simulation;
+use automata::simulation::sim::Simulation;
 
 fn main() -> ggez::GameResult {
     // Set the version information
@@ -35,7 +35,7 @@ fn main() -> ggez::GameResult {
             .help("Prints application version"))
         // Argument for automaton to run
         .arg(Arg::with_name("AUTOMATON")
-            .help("Automaton to Run. Ex. 'gameoflife', 'langstonant', etc. Refer to README for all options.")
+            .help("Automaton to Run. Ex. 'gameoflife', 'langtonsant', etc. Refer to README for all options.")
             .required(true)
             .index(1))
         // Retrieve the argument matches
@@ -88,7 +88,7 @@ fn main() -> ggez::GameResult {
                             std::process::exit(0);
                         },
                         // If it parses, set the height
-                        Ok(h) => grid_h = h + 50.0
+                        Ok(h) => grid_h = h
                     }
                 },
                 // Invalid dimension format
@@ -167,7 +167,7 @@ fn main() -> ggez::GameResult {
     };
 
     // Create ggez WindowMode.
-    let w_mode: conf::WindowMode = conf::WindowMode::default().dimensions(grid_w, grid_h);
+    let w_mode: conf::WindowMode = conf::WindowMode::default().dimensions(grid_w, grid_h + 50.0);
     // Create ggez Window with the automaton name
     let w_setup = conf::WindowSetup::default().title(automaton_name);
     // Create a ggez context with the window mode and window setup
