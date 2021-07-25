@@ -1,11 +1,11 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use clap::{Arg, App};
 use ggez::{conf, event, GameError};
-use automata::simulation::sim::Simulation;
+use automata::commons::simulation::Simulation;
 
 fn main() -> ggez::GameResult {
     // Set the version information
-    let version = "0.2.0";
+    let version = "0.3.0";
     // Set the author information
     let author = "Manish Meganathan <meganthan.manish@gmail.com>";
 
@@ -194,3 +194,29 @@ fn main() -> ggez::GameResult {
         }
     }
 }
+
+// Testbench - Ignore
+// use automata::commons::binarycell::BinaryCell;
+// use automata::commons::simulables::SimCell;
+
+// fn main() {
+
+//     // let dir = Direction::random();
+//     // print!("{:?}", dir);
+//     // print!("{:?}", dir.turn_left());
+//     // print!("{:?}", dir.turn_right());
+
+//     let mut active = 0;
+//     let mut passive = 0;
+    
+//     for _ in 0..1000 {
+//         let cell = BinaryCell::skewed("passive", 10);
+
+//         match cell {
+//             BinaryCell::Active => active += 1,
+//             BinaryCell::Passive => passive += 1,
+//         }
+//     }
+
+//     println!("{} active, {} inert", active, passive);
+// }
