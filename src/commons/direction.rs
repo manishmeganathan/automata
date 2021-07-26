@@ -9,13 +9,13 @@ use rand::Rng;
 /// - ``Direction::West`` <- represents the west direction
 #[derive(Debug, PartialEq)]
 pub enum Direction {
-    // Represents the north direction.
+    /// Represents the north direction.
     North = 0,
-    // Represents the east direction.
+    /// Represents the east direction.
     East = 1,
-    // Represents the south direction.
+    /// Represents the south direction.
     South = 2,
-    // Represents the west direction.
+    /// Represents the west direction.
     West = 3,
 }
 
@@ -65,7 +65,7 @@ impl Direction {
     }
 }
 
-// Implementation of the From<i32> trait for Direction
+/// Implementation of the From<i32> trait for Direction
 impl From<i32> for Direction {
     /// A method that converts an i32 into a Direction
     ///
@@ -92,7 +92,7 @@ impl From<i32> for Direction {
     }
 }
 
-// Implementation of the Clone trait for Direction
+/// Implementation of the Clone trait for Direction
 impl Clone for Direction {
     /// A method that returns a copy of the current Direction
     fn clone(&self) -> Self {
