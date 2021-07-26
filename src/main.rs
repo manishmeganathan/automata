@@ -4,7 +4,7 @@ use ggez::{conf, event, GameError};
 
 fn main() -> ggez::GameResult {
     // Set the version information
-    let version = "0.3.0";
+    let version = "0.4.0";
     // Set the author information
     let author = "Manish Meganathan <meganthan.manish@gmail.com>";
 
