@@ -1,7 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use clap::{Arg, App};
 use ggez::{conf, event, GameError};
-use automata::simulation::sim::Simulation;
 
 fn main() -> ggez::GameResult {
     // Set the version information
@@ -153,6 +152,11 @@ fn main() -> ggez::GameResult {
         }
     }
 
+    // Imports
+    use automata::commons::grids::cellgrid::CellGrid;
+    use automata::commons::cells::binarycell::BinaryCell;
+    use automata::simulation::simulation::Simulation;
+
     // Check if an automaton has been specified and create the simulator grid for it
     let (automaton_name, automaton_sim) = &mut match matches.value_of("AUTOMATON") {
         // No automaton specified
@@ -160,14 +164,17 @@ fn main() -> ggez::GameResult {
         // Some automaton specified. Check the value
         Some(name) => match name {
             // Conway's Game of Life
-            "gameoflife" => ("Conway's Game of Life", Simulation::<automata::gameoflife::grid::Grid>::new(cell_size, fps)),  
+            "gameoflife" => (
+                "Conway's Game of Life", 
+                Simulation::<automata::gameoflife::GameOfLife<CellGrid<BinaryCell>>>::new("default", cell_size, fps)
+            ),  
             // Unsupported Automaton
             _ => ("none", Err(GameError::ConfigError("no automaton specified".to_string()))),
         },
     };
 
     // Create ggez WindowMode.
-    let w_mode: conf::WindowMode = conf::WindowMode::default().dimensions(grid_w, grid_h + 50.0);
+    let w_mode: conf::WindowMode = conf::WindowMode::default().dimensions(grid_w, grid_h + 60.0);
     // Create ggez Window with the automaton name
     let w_setup = conf::WindowSetup::default().title(automaton_name);
     // Create a ggez context with the window mode and window setup
@@ -194,29 +201,3 @@ fn main() -> ggez::GameResult {
         }
     }
 }
-
-// Testbench - Ignore
-// use automata::commons::binarycell::BinaryCell;
-// use automata::commons::simulables::SimCell;
-
-// fn main() {
-
-//     // let dir = Direction::random();
-//     // print!("{:?}", dir);
-//     // print!("{:?}", dir.turn_left());
-//     // print!("{:?}", dir.turn_right());
-
-//     let mut active = 0;
-//     let mut passive = 0;
-    
-//     for _ in 0..1000 {
-//         let cell = BinaryCell::skewed("passive", 10);
-
-//         match cell {
-//             BinaryCell::Active => active += 1,
-//             BinaryCell::Passive => passive += 1,
-//         }
-//     }
-
-//     println!("{} active, {} inert", active, passive);
-// }
