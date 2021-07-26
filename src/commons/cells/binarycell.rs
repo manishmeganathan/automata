@@ -8,13 +8,13 @@ use crate::simulation::simulables::SimCell;
 /// - ``BinaryCell::Passive`` <- represents the OFF state
 #[derive(Debug, PartialEq)]
 pub enum BinaryCell {
-    // Represent the off state
+    /// Represent the off state
     Passive = 0,
-    // Represent the on state
+    /// Represent the on state
     Active = 1,
 }
 
-/// Implementation of constructors for BinaryCell
+/// Implementation of SimCell for BinaryCell
 impl SimCell for BinaryCell {
     /// A constructor function that generates a new BinaryCell with a balanced random state.
     /// Balanced generation means that there is an equal probability for a cell to be passive or active.
@@ -35,10 +35,10 @@ impl SimCell for BinaryCell {
     /// Skewed generation means that there is a higher probability for a cell to be a particular state.
     ///
     /// - @param *skew* is a bool that determines whether the skew state is passive or active.
-    /// - @param *bias* is an i8 that represents the degree of skew towards the skew state. 
+    /// - @param *bias* is an i8 that represents the skew ratio between the non-preferred and preferred state. 
     ///
-    /// A bias of 1 is equivalent to a balanced state generation regardless of the skew value 
-    /// and a bias of 100 with a skew state of true, means the chance of a Passive cell is 1 in 100.
+    /// A bias of 1 is equivalent to a balanced state generation regardless of the skew value (1:1).
+    /// A bias of 100 with a skew value of "active", results in 1:100 ratio leaning towards the active state.
     ///
     /// Valid values for skew are "active" and "passive".
     fn skewed(skew: &str, bias: i8) -> Self {
