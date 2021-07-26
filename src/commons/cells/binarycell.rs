@@ -1,5 +1,5 @@
 use rand::Rng;
-use crate::commons::simulables::SimCell;
+use crate::simulation::simulables::SimCell;
 
 /// An enum that represents the states of a binary cell.
 ///
