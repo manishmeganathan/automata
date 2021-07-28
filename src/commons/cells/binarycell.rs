@@ -1,12 +1,12 @@
 use rand::Rng;
-use crate::simulation::simulables::SimCell;
+use crate::simulation::SimCell;
 
 /// An enum that represents the states of a binary cell.
 ///
 /// Possibile states:
 /// - ``BinaryCell::Active`` <- represents the ON state
 /// - ``BinaryCell::Passive`` <- represents the OFF state
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy)]
 pub enum BinaryCell {
     /// Represent the off state
     Passive = 0,
