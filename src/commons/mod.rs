@@ -1,3 +1,3 @@
 pub mod cells;
 pub mod grids;
-pub mod direction;
+pub mod navigation;
