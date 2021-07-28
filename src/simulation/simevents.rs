@@ -4,8 +4,8 @@ use ggez::graphics;
 use ggez::GameResult;
 use ggez::nalgebra as na;
 
-use crate::simulation::simulables::{Automaton};
-use crate::simulation::simulation::Simulation;
+use crate::simulation::Automaton;
+use crate::simulation::Simulation;
 
 /// Implementation of the EventHandler trait for Simulation
 impl<T: Automaton> event::EventHandler for Simulation<T> {

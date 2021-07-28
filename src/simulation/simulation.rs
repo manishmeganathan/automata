@@ -1,5 +1,5 @@
 use ggez::GameResult;
-use crate::simulation::simulables::{Automaton};
+use crate::simulation::Automaton;
 
 /// A struct that represents the simulator for a generic automaton.
 pub struct Simulation<T> where T: Automaton {
