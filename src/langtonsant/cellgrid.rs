@@ -20,4 +20,23 @@ impl Automaton for LangtonsAnt<CellGrid<BinaryCell>> {
             ant: None,
         }
     }
+
+    /// A method that returns the state of the automaton as a string.
+    /// Format: "Generation: {} | Alive: {} | Dead: {}"
+    fn state(&self) -> String {
+        format!("Generation: {}", self.generation)
+    }
+
+    /// A method that returns the name of the automaton as a string.
+    /// Format: "Langton's Ant"
+    fn name(&self) -> String {
+        "Langton's Ant".to_string()
+    }
+
+    /// A method that returns the name of the automaton as a string 
+    /// along with its initial state and grid type.
+    /// Format: "Langton's Ant | Grid | {}"
+    fn fullname(&self) -> String {
+        format!("Langton's Ant | Grid | {}", self.initialstate)
+    }
 }
