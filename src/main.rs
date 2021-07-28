@@ -1,10 +1,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use clap::{Arg, App};
-use ggez::{conf, event, GameError};
+
+use automata::simulation::Automaton;
+use automata::simulation::Simulation;
 
 fn main() -> ggez::GameResult {
     // Set the version information
-    let version = "0.4.0";
+    let version = "0.5.0";
     // Set the author information
     let author = "Manish Meganathan <meganthan.manish@gmail.com>";
 
@@ -151,53 +153,72 @@ fn main() -> ggez::GameResult {
             std::process::exit(0);
         }
     }
-
-    // Imports
-    use automata::commons::grids::cellgrid::CellGrid;
-    use automata::commons::cells::binarycell::BinaryCell;
-    use automata::simulation::simulation::Simulation;
+    
+    // Automaton Entity Imports
+    use automata::commons::grids::CellGrid;
+    use automata::commons::cells::BinaryCell;
 
     // Check if an automaton has been specified and create the simulator grid for it
-    let (automaton_name, automaton_sim) = &mut match matches.value_of("AUTOMATON") {
+    match matches.value_of("AUTOMATON") {
         // No automaton specified
-        None => ("none", Err(GameError::ConfigError("no automaton specified".to_string()))),
+        None => {
+            // Print an error and exit
+            eprintln!("[error] no automaton specified.");
+            std::process::exit(0);
+        },
         // Some automaton specified. Check the value
         Some(name) => match name {
             // Conway's Game of Life
-            "gameoflife" => (
-                "Conway's Game of Life", 
-                Simulation::<automata::gameoflife::GameOfLife<CellGrid<BinaryCell>>>::new("default", cell_size, fps)
-            ),  
-            // Unsupported Automaton
-            _ => ("none", Err(GameError::ConfigError("no automaton specified".to_string()))),
-        },
-    };
+            "gameoflife" => {
+                let sim = &mut Simulation::<automata::gameoflife::GameOfLife<CellGrid<BinaryCell>>>::new("default", cell_size, fps);
+                rendersim(sim, grid_w, grid_h, cell_size, fps, &author)
+            }, 
+            // Langton's Ant
+            "langtonsant" => {
+                let sim = &mut Simulation::<automata::langtonsant::LangtonsAnt<CellGrid<BinaryCell>>>::new("default", cell_size, fps);
+                rendersim(sim, grid_w, grid_h, cell_size, fps, &author)
+            },  
 
-    // Create ggez WindowMode.
-    let w_mode: conf::WindowMode = conf::WindowMode::default().dimensions(grid_w, grid_h + 60.0);
-    // Create ggez Window with the automaton name
-    let w_setup = conf::WindowSetup::default().title(automaton_name);
-    // Create a ggez context with the window mode and window setup
-    let cb = ggez::ContextBuilder::new(automaton_name, author)
-        .window_mode(w_mode)
-        .window_setup(w_setup);
-    
-    // Check if the automaton sim has been created
-    match automaton_sim {
-        // If the automaton sim has been created
-        Ok(sim) => {
+            // Unsupported Automaton - Print an error and exit
+            _ => {
+                eprintln!("[error] invalid automaton specified.");
+                std::process::exit(0);
+            },
+        },
+    }
+}
+
+// A function that renders the simulation in a window
+fn rendersim<T: Automaton>(automaton: &mut Result<Simulation<T>, ggez::GameError>, grid_w: f32, grid_h: f32, cell_size: f32, fps: u32, author: &str) -> ggez::GameResult {
+    use ggez::{conf, event};
+
+    // Check if the automaton has any errors
+    match automaton {
+        // Render the automaton
+        Ok(simulation) => {
+            // Get the name of the automaton
+            let simname = simulation.automaton.name();
+            // Create ggez WindowMode.
+            let w_mode: conf::WindowMode = conf::WindowMode::default().dimensions(grid_w, grid_h + 60.0);
+            // Create ggez Window with the automaton name
+            let w_setup = conf::WindowSetup::default().title(simname.as_str());
+            // Create a ggez context with the window mode and window setup
+            let cb = ggez::ContextBuilder::new(simname.as_str(), author)
+                .window_mode(w_mode)
+                .window_setup(w_setup);
+
             // Print the simulation config
-            println!("Running {} | {}x{} | {}px @ {} FPS", automaton_name, grid_w, grid_h, cell_size, fps);
+            println!("Running {} | {}x{} | {}px @ {} FPS", simname, grid_w, grid_h, cell_size, fps);
             // Build the context and event loop
             let (ctx, event_loop) = &mut cb.build()?;
             // Start the simulation event loop
-            event::run(ctx, event_loop, sim)
-        }, 
-        // If the automaton sim has not been created
+            event::run(ctx, event_loop, simulation)
+        },
+
+        // Print an error and exit
         Err(err) => {
-            // Print an error and exit
             eprintln!("[error] could not render simulation. {}", err);
             std::process::exit(0);
         }
-    }
+    }        
 }
