@@ -55,6 +55,60 @@ impl Automaton for LangtonsAnt<CellGrid<BinaryCell>> {
         }
     }
 
+    /// A method that advances the ant to the next generation.
+    fn advance(&mut self) {
+        // Check if the cell grid exists
+        if self.grid.vector.is_some() {
+            // Clone the ant and check if it is active
+            let mut newant = self.ant.clone().unwrap();
+            if !newant.active {
+                // Return if the ant is inactive
+                return;
+            }
+
+            // Check if the ant step and automaton generation are in sync
+            if self.generation == newant.step {
+                // Get the cell state of the current cell that the ant is on
+                let (_, _, cell) = newant.position;
+                // Rotate the ant based on the automaton rules
+                let newdir = match cell {
+                    // If cell is active, turn right
+                    BinaryCell::Active => newant.orientation.turn_right(),
+                    // If cell is inactive, turn left
+                    BinaryCell::Passive => newant.orientation.turn_left(),
+                };
+
+                // Set the new orientation of the ant
+                newant.orientation = newdir;
+                // Increase the step count of the ant
+                newant.step += 1;
+                // Update the automaton ant with the new ant state
+                self.ant = Some(newant);
+
+            // If ant and automaton are not in sync
+            } else {
+                // Create a clone of the cell grid
+                let mut newgrid = self.grid.vector.clone().unwrap();
+                // Flip the current cell of the ant
+                newant.flipcell();
+
+                // Get the cell state and position of the ant
+                let (x, y, cell) = newant.position;
+                // Update the grid clone for that position with the new cell state
+                newgrid[x][y] = cell;
+                // Move the ant forward by one unit (kill turmite if at grid edge)
+                newant.move_forward(&newgrid);
+
+                // Update the automaton ant with the new ant state
+                self.ant = Some(newant);
+                // Update the automaton generation and sync with ant step count
+                self.generation += 1;
+                // Update the automaton grid with the new grid state
+                self.grid.setgrid(newgrid);
+            }
+        }
+    }
+
     /// A method that returns the state of the automaton as a string.
     /// Format: "Generation: {} | Alive: {} | Dead: {}"
     fn state(&self) -> String {
