@@ -1,9 +1,9 @@
 mod cellgrid;
 
-use crate::simulation::simulables::SimGrid;
+use crate::simulation::SimGrid;
 
 /// A struct that represents the automaton for 
-// Conway's Game of Life on a generic grid.
+/// Conway's Game of Life on a generic grid.
 pub struct GameOfLife<T> where T: SimGrid {
     /// Represents the automaton grid.
     grid: T,    

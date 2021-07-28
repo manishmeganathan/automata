@@ -2,9 +2,9 @@ use ggez::graphics;
 use ggez::GameResult;
 use ggez::nalgebra as na;
 
-use crate::simulation::simulables::{SimGrid, Automaton};
-use crate::commons::cells::binarycell::BinaryCell;
-use crate::commons::grids::cellgrid::CellGrid;
+use crate::simulation::{SimGrid, Automaton};
+use crate::commons::cells::BinaryCell;
+use crate::commons::grids::CellGrid;
 use crate::gameoflife::GameOfLife;
 
 /// Implementation of the Automaton trait for GameOfLife with a CellGrid grid,
@@ -123,8 +123,15 @@ impl Automaton for GameOfLife<CellGrid<BinaryCell>> {
     }
 
     /// A method that returns the name of the automaton as a string.
-    /// Format: "Conway's Game of Life | Grid | {}"
+    /// Format: "Conway's Game of Life"
     fn name(&self) -> String {
+        "Conway's Game of Life".to_string()
+    }
+
+    /// A method that returns the name of the automaton as a string 
+    /// along with its initial state and grid type.
+    /// Format: "Conway's Game of Life | Grid | {}"
+    fn fullname(&self) -> String {
         format!("Conway's Game of Life | Grid | {}", self.initialstate)
     }
 }
@@ -178,7 +185,6 @@ impl GameOfLife<CellGrid<BinaryCell>> {
         return count
     }
 }
-
 
 // Implementation of the Drawable trait for GameOfLife with a CellGrid grid,
 impl graphics::Drawable for GameOfLife<CellGrid<BinaryCell>> {
@@ -241,7 +247,7 @@ impl graphics::Drawable for GameOfLife<CellGrid<BinaryCell>> {
         let font_size = 18.0;
 
         // Create the text graphics for the banner
-        let mut name_text = graphics::Text::new(self.name());
+        let mut name_text = graphics::Text::new(self.fullname());
         let mut state_text = graphics::Text::new(self.state());
 
         // Set the font styling for the text graphics
