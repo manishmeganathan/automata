@@ -1,9 +1,6 @@
-use crate::commons::grids::cellgrid::CellGrid;
-use crate::simulation::simulables::{SimCell, SimGrid};
-
-/// A type alias for a cell on the grid and its position in that grid
-/// Represents the x, y position and the cell at that position on the grid
-pub type GridCell<C> = (usize, usize, C);
+use crate::simulation::{SimCell, SimGrid};
+use crate::commons::grids::CellGrid;
+use crate::commons::grids::GridCell;
 
 /// A struct that represents a scanning iterator for a SimGrid
 pub struct GridScanner<T> where T: SimGrid {
