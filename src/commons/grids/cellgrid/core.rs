@@ -1,6 +1,9 @@
+use rand::Rng;
 use ggez::graphics;
-use crate::simulation::simulables::{SimCell, SimGrid};
-use crate::commons::grids::scanner::{GridCell, GridScanner};
+
+use crate::commons::navigation::Direction4;
+use crate::simulation::{SimCell, SimGrid};
+use crate::commons::grids::{GridCell, GridScanner};
 
 /// A struct that represents a grid of generic cells.
 /// The generic cell type must implement the SimCell trait.
@@ -18,6 +21,9 @@ pub struct CellGrid<T> where T: SimCell {
 impl<T: SimCell> SimGrid for CellGrid<T> {
     /// Define the type of cell in the grid
     type Cell = T;
+
+    /// Define the type of compass
+    type Orientation = Direction4;
 
     /// A constructor method that creates a null grid.
     /// Set the given cell size into the struct.
@@ -38,40 +44,41 @@ impl<T: SimCell> SimGrid for CellGrid<T> {
     fn setdimensions(&mut self, other: graphics::Rect) {
         self.dimensions = Some(other);
     }
-}
 
-/// Implementation of builder methods for CellGrid.
-/// A collection of functions that build various intial states of the grid.
-impl<T: SimCell> CellGrid<T> {
-    /// A function that creates a randomized grid of cells for the
-    /// given cell size and grid dimensions. All cell states have
-    /// an equal probability of occuring on the grid.
-    pub fn generate_randomgrid_balanced(cellsize: f32, dimensions:graphics::Rect) -> Vec<Vec<T>> {
-        // Calculate the number of rows and columns in the grid
-        let rows = dimensions.w / cellsize;
-        let cols = dimensions.h / cellsize;
-
-        // Create a new vector (represents rows)
-        let mut gridvector = Vec::new();
-
-        // Iterate for each row
-        for _ in 0..(rows as i32) {
-            // Create a new vector (represents columns)
-            let mut column = Vec::new();
-            // Iterate for each column
-            for _ in 0..(cols as i32) {
-                // Create a new cell with the balanced randomizer 
-                // and push it into the column vector
-                column.push(T::balanced());
-            }
-
-            // Push the column vector into the row vector (grid)
-            gridvector.push(column);
-        }  
-
-        // Return the grid vector
-        return gridvector
+    /// A getter method that returns the height of the grid (number of rows)
+    /// Returns 0 if the grid is null.
+    fn getheight(&self) -> usize {
+        match &self.vector {
+            None => 0,
+            Some(vec) => vec.len(),
+        }
     }
+
+    /// A getter method that returns the width of the grid (number of columns).
+    /// Returns 0 if the grid is null.
+    fn getwidth(&self) -> usize {
+        match &self.vector {
+            None => 0,
+            Some(vec) => vec[0].len(),
+        }
+    }
+
+    /// A method that returns a random cell from the grid.
+    /// Returns the x,y position of the cell along with cell state as a GridCell
+    fn randomcell(&self) -> GridCell<Self::Cell> {
+        // Check if grid exists
+        if let Some(grid) = &self.vector {
+            // Get a random column and row from the grid
+            let col = rand::thread_rng().gen_range(0..grid.len());
+            let row = rand::thread_rng().gen_range(0..grid[0].len());
+            // Build the GridCell and return it
+            return (col, row, grid[row][col])
+        
+        // If the grid is null, panic
+        } else {
+            panic!("random grid cell selection failed. grid is empty!")
+        }
+    } 
 }
 
 /// Implementation of the Clone trait for Grid
